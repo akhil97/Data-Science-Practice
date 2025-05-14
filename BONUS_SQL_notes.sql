@@ -22,6 +22,8 @@ COUNT(*) -> includes NULL values while COUNT(column_name) excludes NULL values
 
 -- Using LIKE command in SQL
 Return data where column name starts with p: WHERE column_name LIKE 'p%'
+-- If the character(s) appears after a word then use a space after the first %. For example:-
+WHERE column_name LIKE '% DIAB1%'
 
 -- VERY IMPORTANT QUESTION IN INTERVIEWS:- Find second-largest salary of employees
 --First find Maximum Salary of Employees by:-
@@ -45,3 +47,8 @@ GROUP_CONCAT(column_name, ',') AS combined_value
 -- To find records between a range of dates always use between. For example, you want to find out products ordered in February 2020 then use:-
 WHERE order_date BETWEEN '2020-02-01' AND '2020-02-29'
 
+-- Not all database systems support the SELECT TOP clause. MySQL supports the LIMIT clause to select a limited number of records, while Oracle uses FETCH FIRST n ROWS ONLY and ROWNUM
+
+-- Difference between rows between and range between in SQL
+--  ROWS BETWEEN: It defines the window based on the physical position of the rows above or below relative to the current row.
+-- RANGE BETWEEN: It defines the window based on the logical relationship based on the column.
