@@ -52,3 +52,8 @@ WHERE order_date BETWEEN '2020-02-01' AND '2020-02-29'
 -- Difference between rows between and range between in SQL
 --  ROWS BETWEEN: It defines the window based on the physical position of the rows above or below relative to the current row.
 -- RANGE BETWEEN: It defines the window based on the logical relationship based on the column.
+
+
+-- Using aggregate functions with a condition.
+-- Sometimes you need to use aggregate functions based on a certain condition. In those case you have to use case when and wrap the aggregate function over it. For example:-
+SUM(CASE WHEN c.action = 'confirmed' then c.user_id else 0 end)
