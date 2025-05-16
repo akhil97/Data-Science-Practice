@@ -57,3 +57,15 @@ WHERE order_date BETWEEN '2020-02-01' AND '2020-02-29'
 -- Using aggregate functions with a condition.
 -- Sometimes you need to use aggregate functions based on a certain condition. In those case you have to use case when and wrap the aggregate function over it. For example:-
 SUM(CASE WHEN c.action = 'confirmed' then c.user_id else 0 end)
+
+-- Regular expressions in SQL. Sometimes like keyword is not suitable for complex patterns then similar to Python regular expressions can be used for pattern matching. Example:-
+-- Determine users with valid email ids from the table with conditions:-
+-- Start with a letter
+-- Can have only dot, underscore and dash characters allowed in the email
+-- Must have the domain name @leetcode.com
+SELECT user_id, name, mail
+FROM Users
+WHERE mail REGEXP '^[a-zA-Z]{1}[a-zA-Z0-9_.-]*@leetcode[.]com$'
+-- ^[a-zA-Z]{1} - first character should be a letter a-z or A-Z
+--[a-zA-Z0-9_.-]* - Then you can have alphanumeric characters along with _.-
+-- *@leetcode[.]com$ - Ending with domain name @leetcode.com only
