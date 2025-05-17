@@ -69,3 +69,5 @@ WHERE mail REGEXP '^[a-zA-Z]{1}[a-zA-Z0-9_.-]*@leetcode[.]com$'
 -- ^[a-zA-Z]{1} - first character should be a letter a-z or A-Z
 --[a-zA-Z0-9_.-]* - Then you can have alphanumeric characters along with _.-
 -- *@leetcode[.]com$ - Ending with domain name @leetcode.com only
+
+-- Difference between rank and dense rank window function:- Rank skips a level when there are duplicates while dense rank does not skip a level.
