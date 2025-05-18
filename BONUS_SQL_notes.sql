@@ -71,3 +71,18 @@ WHERE mail REGEXP '^[a-zA-Z]{1}[a-zA-Z0-9_.-]*@leetcode[.]com$'
 -- *@leetcode[.]com$ - Ending with domain name @leetcode.com only
 
 -- Difference between rank and dense rank window function:- Rank skips a level when there are duplicates while dense rank does not skip a level.
+-- For example:-
+SELECT *,
+       RANK() OVER(PARTITION BY Department ORDER BY Salary DESC) AS rnk
+FROM Department
+-- Will return 1,2,2,4 if there are duplicate values for salary.
+SELECT *,
+       DENSE_RANK() OVER(PARTITION BY Department ORDER BY Salary DESC) AS drnk
+FROM Department
+-- Will return 1,2,2,3 if there are duplicate values for salary.
+
+--To delete duplicate values from a table you can use two aliases for table. For example, you want to delete duplicate email ids you can reference them with p1 and p2.
+-- Then you can use p1.email = p2.email (duplicate emails) and p1.id > p2.id (p1.id and p2.id refer different entries)
+DELETE p1
+FROM Person as p1, Person as p2
+WHERE p1.email = p2.email and p1.id > p2.id
