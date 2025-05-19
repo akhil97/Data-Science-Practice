@@ -86,3 +86,15 @@ FROM Department
 DELETE p1
 FROM Person as p1, Person as p2
 WHERE p1.email = p2.email and p1.id > p2.id
+
+-- Convert characters to upper and lower case in SQL
+-- Use SUBSTRING() function to locate the characters then use LOWER or UPPER to change the case.
+-- For example:- You are given a task to change the first letter to upper case and the remaining letters to lower case
+SELECT user_id,
+CONCAT(UPPER(SUBSTRING(name, 1, 1)), LOWER(SUBSTRING(name, 2, LENGTH(name)))) AS name
+FROM Users
+-- SUBSTRING(name, 1, 1) - first character
+-- UPPER(SUBSTRING(name, 1, 1)) - converts first character to upper case
+-- SUBSTRING(name, 2, LENGTH(name) - from second character to the end of string
+-- LOWER(SUBSTRING(name, 2, LENGTH(name)) - converts second character to end of string to lower
+-- CONCAT(UPPER(SUBSTRING(name, 1, 1)), LOWER(SUBSTRING(name, 2, LENGTH(name))))  - concatenate the obtained results to form the new string
