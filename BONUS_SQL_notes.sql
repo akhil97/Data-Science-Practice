@@ -98,3 +98,26 @@ FROM Users
 -- SUBSTRING(name, 2, LENGTH(name) - from second character to the end of string
 -- LOWER(SUBSTRING(name, 2, LENGTH(name)) - converts second character to end of string to lower
 -- CONCAT(UPPER(SUBSTRING(name, 1, 1)), LOWER(SUBSTRING(name, 2, LENGTH(name))))  - concatenate the obtained results to form the new string
+
+-- Get last n characters from a name in SQL
+SUBSTRING(name, -n)
+
+-- Difference between union and union all:-
+-- Union returns unique values only while union all returns the duplicate values as well
+-- While using union or union all always ensure that the number of column values are the same in both the queries
+WITH all_friends as (
+SELECT requester_id
+FROM RequestAccepted
+UNION
+SELECT accepter_id
+FROM RequestAccepted
+)
+-- Returns 1, 2, 3, 4
+WITH all_friends as (
+SELECT requester_id
+FROM RequestAccepted
+UNION ALL
+SELECT accepter_id
+FROM RequestAccepted
+)
+-- Returns 1, 1, 2, 2, 3, 3, 3, 4
