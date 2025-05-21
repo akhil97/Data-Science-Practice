@@ -121,3 +121,13 @@ SELECT accepter_id
 FROM RequestAccepted
 )
 -- Returns 1, 1, 2, 2, 3, 3, 3, 4
+
+-- Using multiple aliases for a table and running a subquery
+-- Lets say you have to use multiple aliases for a single table and then use subqueries. To make this work always refer the alias used in outer query inside the inner query.
+-- And not the other way round. Example:-
+SELECT ROUND(SUM(a.tiv_2016), 2) AS tiv_2016
+FROM Insurance a
+WHERE a.tiv_2015 IN (SELECT b.tiv_2015 FROM insurance b WHERE a.pid <> b.pid)
+AND
+(a.lat, a.lon) NOT IN (SELECT c.lat, c.lon FROM Insurance c WHERE a.pid <> c.pid)
+-- Notice how in the above query we are using alias a inside the two subqueries having alias b and c.
