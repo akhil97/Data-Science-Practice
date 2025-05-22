@@ -131,3 +131,16 @@ WHERE a.tiv_2015 IN (SELECT b.tiv_2015 FROM insurance b WHERE a.pid <> b.pid)
 AND
 (a.lat, a.lon) NOT IN (SELECT c.lat, c.lon FROM Insurance c WHERE a.pid <> c.pid)
 -- Notice how in the above query we are using alias a inside the two subqueries having alias b and c.
+
+-- Suppose you need to find users that have given maximum number of ratings for the movies. DONT make this mistake:-
+SELECT user_id
+FROM users
+GROUP BY user_id
+HAVING COUNT(rating) = (SELECT MAX(COUNT(rating)) FROM users)
+-- Instead do this
+SELECT user_id
+FROM users
+GROUP BY user_id
+ORDER BY COUNT(rating) DESC
+LIMIT 1
+-- In the first query the subquery is wrong as it does not have a group by. A simpler way to solve this without having clause is to use the aggregate function in order by clause
