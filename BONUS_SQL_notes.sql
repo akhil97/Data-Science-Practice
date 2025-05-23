@@ -144,3 +144,10 @@ GROUP BY user_id
 ORDER BY COUNT(rating) DESC
 LIMIT 1
 -- In the first query the subquery is wrong as it does not have a group by. A simpler way to solve this without having clause is to use the aggregate function in order by clause
+
+--Using conditions to update a column value in SQL
+SELECT
+CASE WHEN id%2=0 then id-1
+WHEN id%2!=0 AND id=(SELECT max(id) FROM Seat) THEN id
+WHEN id%2!=0 THEN id+1 END AS id
+FROM Seat
