@@ -151,3 +151,14 @@ CASE WHEN id%2=0 then id-1
 WHEN id%2!=0 AND id=(SELECT max(id) FROM Seat) THEN id
 WHEN id%2!=0 THEN id+1 END AS id
 FROM Seat
+
+--  Return users by the number of tweets they posted in 2022 and count the number of users in each group.
+WITH tweet_buckets AS (SELECT COUNT(tweet_id) AS tweet_bucket, user_id
+FROM tweets
+WHERE tweet_date BETWEEN '01/01/2022' AND '12/31/2022'
+GROUP BY user_id)
+SELECT tweet_bucket, COUNT(user_id) AS users_num
+FROM tweet_buckets
+GROUP BY tweet_bucket
+-- In this question you have to use a CTE to figure out count of users in each group. You cannot simply use GROUP BY user_id, tweet_id or COUNT(tweet_id), COUNT(user_id) in SELECT
+-- Instead find the number of tweets grouped by user_id, then find the number of users grouped by tweet buckets (tweet count)
