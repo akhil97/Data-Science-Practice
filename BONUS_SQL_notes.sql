@@ -170,3 +170,5 @@ MAX(post_date) OVER(PARTITION BY user_id) AS last_post
 FROM posts
 -- Find number of days between first_post and last_post by:-
 EXTRACT(DAY FROM last_post - first_post) AS days_between
+
+-- For PostgreSQL use LIMIT n instead of TOP n which is for MySQL
