@@ -162,3 +162,11 @@ FROM tweet_buckets
 GROUP BY tweet_bucket
 -- In this question you have to use a CTE to figure out count of users in each group. You cannot simply use GROUP BY user_id, tweet_id or COUNT(tweet_id), COUNT(user_id) in SELECT
 -- Instead find the number of tweets grouped by user_id, then find the number of users grouped by tweet buckets (tweet count)
+
+-- Using aggregate functions along with window functions:-
+SELECT *,
+MIN(post_date) OVER(PARTITION BY user_id) AS first_post,
+MAX(post_date) OVER(PARTITION BY user_id) AS last_post
+FROM posts
+-- Find number of days between first_post and last_post by:-
+EXTRACT(DAY FROM last_post - first_post) AS days_between
