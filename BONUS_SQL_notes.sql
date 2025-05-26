@@ -172,3 +172,5 @@ FROM posts
 EXTRACT(DAY FROM last_post - first_post) AS days_between
 
 -- For PostgreSQL use LIMIT n instead of TOP n which is for MySQL
+LIMIT 2
+-- LIMIT  n is same as TOP n
