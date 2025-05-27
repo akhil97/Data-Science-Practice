@@ -174,3 +174,10 @@ EXTRACT(DAY FROM last_post - first_post) AS days_between
 -- For PostgreSQL use LIMIT n instead of TOP n which is for MySQL
 LIMIT 2
 -- LIMIT  n is same as TOP n
+
+-- Self joins
+-- Find employees whose salary is more than that of their manager.
+SELECT DISTINCT e.employee_id, e.name AS employee_name
+FROM employee AS e JOIN employee AS m ON m.employee_id=e.manager_id
+WHERE e.salary > m.salary AND e.manager_id IS NOT NULL;
+-- Join condition should be m.employee_id=e.manager_id and not e.employee_id=m.manager_id as there should be a match between e.manager_id and m.employee_id
