@@ -181,3 +181,17 @@ SELECT DISTINCT e.employee_id, e.name AS employee_name
 FROM employee AS e JOIN employee AS m ON m.employee_id=e.manager_id
 WHERE e.salary > m.salary AND e.manager_id IS NOT NULL;
 -- Join condition should be m.employee_id=e.manager_id and not e.employee_id=m.manager_id as there should be a match between e.manager_id and m.employee_id
+
+-- Using once CTE in another CTE
+WITH cte1 AS (
+    SELECT ...
+    FROM dbo.sometable
+),
+cte2 AS (
+    SELECT ...
+    FROM cte1
+),
+cte3 AS (
+    SELECT ...
+   FROM cte2
+)
