@@ -228,4 +228,7 @@ SELECT ROUND(123.456, -1); -- Rounds to the nearest ten
 -- Result: 120
 SELECT ROUND(123.456, -2); -- Rounds to the nearest hundred
 -- Result: 100
-
+--Function	                            Behavior	                        Positive Number (e.g., 3.14, 3.7)	Negative Number (e.g., -3.14, -3.7)
+--ROUND	      Rounds to the nearest integer (or specified decimal places)	              3, 4	                         -3, -4
+--FLOOR	      Rounds down to the nearest integer (towards negative infinity)	          3, 3	                         -4, -4
+--CEIL	      Rounds up to the nearest integer (towards positive infinity)	              4, 4	                         -3, -3
