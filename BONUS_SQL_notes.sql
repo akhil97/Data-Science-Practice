@@ -195,3 +195,37 @@ cte3 AS (
     SELECT ...
    FROM cte2
 )
+
+-- Difference between ROUND, FLOOR and CEIL
+-- ROUND rounds up to the nearest Integer which can be above, below or equal to the actual value
+-- ROUND Rounds to the nearest integer (or specified decimal places)
+-- FLOOR rounds up to the nearest Integer which can be equal to or below the actual value
+-- FLOOR Rounds down to the nearest integer (towards negative infinity)
+-- CEIL rounds up to the nearest Integer which can be equal to or above the actual value
+-- CEIL	Rounds up to the nearest integer (towards positive infinity)
+-- Example:-
+SELECT ROUND(3.14159);
+-- Result: 3
+SELECT FLOOR(3.14159);
+-- Result: 3
+SELECT CEIL(3.14159);
+-- Result: 4
+SELECT ROUND(3.7);
+-- Result: 4
+SELECT FLOOR(3.7);
+-- Result: 3
+SELECT CEIL(3.7);
+-- Result: 4
+SELECT ROUND(3.5);
+-- Result: 4 (rounds up for .5)
+SELECT ROUND(-3.5);
+-- Result: -4 (rounds up for .5, meaning towards zero for negative numbers)
+SELECT ROUND(-3.5);
+-- Result: -4 (rounds up for .5, meaning towards zero for negative numbers)
+SELECT ROUND(3.14159, 2);
+-- Result: 3.14
+SELECT ROUND(123.456, -1); -- Rounds to the nearest ten
+-- Result: 120
+SELECT ROUND(123.456, -2); -- Rounds to the nearest hundred
+-- Result: 100
+
