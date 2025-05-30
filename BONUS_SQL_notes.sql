@@ -232,3 +232,9 @@ SELECT ROUND(123.456, -2); -- Rounds to the nearest hundred
 --ROUND	      Rounds to the nearest integer (or specified decimal places)	              3, 4	                         -3, -4
 --FLOOR	      Rounds down to the nearest integer (towards negative infinity)	          3, 3	                         -4, -4
 --CEIL	      Rounds up to the nearest integer (towards positive infinity)	              4, 4	                         -3, -3
+
+--In PostgreSQL, ROUND(double precision, integer) does not exist. For this reason you have to typecast the variable as numeric before using the round function
+-- This will cause the error you saw
+SELECT ROUND(my_float_column, 2) FROM your_table;
+-- Correct way
+SELECT ROUND(CAST(my_float_column AS NUMERIC), 2) FROM your_table;
