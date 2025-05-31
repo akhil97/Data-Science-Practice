@@ -238,3 +238,11 @@ SELECT ROUND(123.456, -2); -- Rounds to the nearest hundred
 SELECT ROUND(my_float_column, 2) FROM your_table;
 -- Correct way
 SELECT ROUND(CAST(my_float_column AS NUMERIC), 2) FROM your_table;
+
+-- If you want to handle NULL values in a column use COALESCE function in SQL. Example:-
+SELECT
+    employee_id,
+    COALESCE(employee_name, 'Unknown') AS employee_name,
+    COALESCE(employee_salary, 0) AS employee_salary
+FROM
+    employees;
