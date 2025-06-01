@@ -132,7 +132,7 @@ AND
 (a.lat, a.lon) NOT IN (SELECT c.lat, c.lon FROM Insurance c WHERE a.pid <> c.pid)
 -- Notice how in the above query we are using alias a inside the two subqueries having alias b and c.
 
--- Suppose you need to find users that have given maximum number of ratings for the movies. DONT make this mistake:-
+-- Suppose you need to find users that have given maximum number of ratings for the movies. DON'T make this mistake:-
 SELECT user_id
 FROM users
 GROUP BY user_id
@@ -246,3 +246,10 @@ SELECT
     COALESCE(employee_salary, 0) AS employee_salary
 FROM
     employees;
+
+-- Regular expressions in SQL using REGEXP keyword
+-- ^ beginning
+-- $ end
+-- | logical or
+-- [abcd] any of a,b,c,d
+-- [a-f] range a to f
