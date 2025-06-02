@@ -253,3 +253,8 @@ FROM
 -- | logical or
 -- [abcd] any of a,b,c,d
 -- [a-f] range a to f
+
+-- When there are two tables (Students and Grades) having columns Marks in Students and Min_Mark and Max_Mark in Grades then you can join on the condition:-
+SELECT CASE WHEN g.Grade < 8 THEN NULL ELSE s.Name END AS Name, g.Grade, s.Marks
+FROM Students AS s JOIN Grades AS g ON s.Marks BETWEEN g.Min_Mark AND g.Max_Mark
+ORDER BY g.Grade DESC, s.Name
