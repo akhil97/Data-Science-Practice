@@ -262,3 +262,22 @@ ORDER BY g.Grade DESC, s.Name
 -- Using CTEs in join operations:-
 WITH CTE as (...)
 SELECT table_a AS a JOIN CTE AS c ON a.id = c.id
+
+-- Creating a new group as a column in one CTE and using it in another CTE:-
+WITH project_groups AS (
+SELECT *,
+    DATEADD(DAY, -ROW_NUMBER() OVER(ORDER BY Start_Date), End_Date) AS grp
+    FROM Projects
+), GroupedProjects AS (
+SELECT MIN(Start_Date) AS project_start,
+    MAX(End_Date) AS project_end,
+    DATEDIFF(DAY, MIN(Start_Date), MAX(End_Date)) AS project_days
+    FROM project_groups
+    GROUP BY grp
+)
+SELECT project_start, project_end
+FROM GroupedProjects
+ORDER BY project_days, project_start;
+-- The above code creates a group column called grp where it groups all the start dates for a project into a single group called grp by using DATEADD() function.
+-- Also, it uses ROW_NUMBER() function so that consecutive end and start dates can be combined into a single project group. Once that is done, a new project group
+-- with new project start and end dates are created so that the number of project days can be calculated for each project grouping by grp that was created.
