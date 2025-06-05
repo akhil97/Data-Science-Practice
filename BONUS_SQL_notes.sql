@@ -281,3 +281,12 @@ ORDER BY project_days, project_start;
 -- The above code creates a group column called grp where it groups all the start dates for a project into a single group called grp by using DATEADD() function.
 -- Also, it uses ROW_NUMBER() function so that consecutive end and start dates can be combined into a single project group. Once that is done, a new project group
 -- with new project start and end dates are created so that the number of project days can be calculated for each project grouping by grp that was created.
+
+-- Whenever you are using 2 CTEs and referencing one CTE in another CTE be careful if the two CTEs have same column names and you are using * operator
+WITH CTE1 AS (...), CTE2 AS (SELECT *
+    FROM CTE1 JOIN CTE2) -- If CTE1 and CTE2 have same column names this will throw an error saying duplicate column name error. Instead do this:-
+WITH CTE1 AS (...), CTE2 AS (
+    SELECT c1.*, c2.*
+    FROM CTE1 AS c1 JOIN CTE2 AS c2... -- This will select all columns from CTE1 and will work even if the same column names are present because
+    -- SELECT * represents all columns from both CTEs which will result in an error due to duplicate column names, while c1.*, c2.* clearly differentiates the columns
+    )
