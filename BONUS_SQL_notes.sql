@@ -290,3 +290,9 @@ WITH CTE1 AS (...), CTE2 AS (
     FROM CTE1 AS c1 JOIN CTE2 AS c2... -- This will select all columns from CTE1 and will work even if the same column names are present because
     -- SELECT * represents all columns from both CTEs which will result in an error due to duplicate column names, while c1.*, c2.* clearly differentiates the columns
     )
+
+-- Multiple joins in SQL
+SELECT a.*
+FROM table1 AS a
+JOIN table2 AS b ON a.id = b.id
+JOIN table3 AS c ON a.class = c.class
