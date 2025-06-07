@@ -296,3 +296,25 @@ SELECT a.*
 FROM table1 AS a
 JOIN table2 AS b ON a.id = b.id
 JOIN table3 AS c ON a.class = c.class
+
+
+-- Don't mix standard aggregate functions with window functions in the same query
+-- The standard aggregate function MAX(count_challenges) attempts to collapse all rows from count_of_challenges into a single row to find the single maximum value.
+-- However, the * and the COUNT(*) OVER(...) window function operate on each individual row. This conflict causes a syntax error in most SQL databases (including MySQL with the default ONLY_FULL_GROUP_BY setting).:-
+WITH max_count_challenges AS (
+    SELECT *,
+    MAX(count_challenges) AS max_challenges, -- This is a standard aggregate function
+    COUNT(*) OVER(PARTITION BY count_challenges) AS count_same_total -- This is a window function
+    FROM count_of_challenges
+)
+-- Instead use use MAX() as a window function instead of an aggregate function. This allows you to calculate the overall maximum and append it to every row without collapsing the result set.
+-- This allows you to calculate the overall maximum and append it to every row without collapsing the result set:-
+WITH max_count_challenges AS (
+    SELECT
+        hacker_id,
+        name,
+        count_challenges,
+        MAX(count_challenges) OVER () AS max_challenges, -- MAX() used as a window function
+        COUNT(*) OVER (PARTITION BY count_challenges) AS count_same_total
+    FROM count_of_challenges
+)
