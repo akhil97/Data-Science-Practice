@@ -327,3 +327,9 @@ WITH max_count_challenges AS (
 -- Single-Value Comparison in WHERE Clauses:- When you need to compare a single value to a result from another query, utilize the subquery in the WHERE clause to enable dynamic data filtering.
 -- Column Creation and Aggregation:- Utilize subqueries to create new columns for real-time computations and to calculate intermediate values for aggregation functions within larger queries.
 -- Correlated Subqueries:- Utilize correlated subqueries to retrieve values from the outer query.
+
+--Creating a temporary table in SQL:-
+CREATE TEMP TABLE artists_clean AS
+       SELECT *
+       FROM artists
+       WHERE birth_date IS NOT NULL;
