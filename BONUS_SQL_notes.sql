@@ -318,3 +318,12 @@ WITH max_count_challenges AS (
         COUNT(*) OVER (PARTITION BY count_challenges) AS count_same_total
     FROM count_of_challenges
 )
+-- Advantages of using CTE and subquery:-
+-- CTE
+-- Break Down Complex Queries:- Breaking down the query into smaller, more manageable components fosters effortless code maintenance and enhances comprehension.
+-- Reusing Subquery Results:- When you need to use the same subquery result multiple times within a larger query, CTEs can be used to prevent redundant calculations.
+-- Recursive Queries:- When you need to perform recursive queries, such as traversing hierarchical data like organizational structures or threaded discussions, CTEs are the ideal choice.
+-- Subquery
+-- Single-Value Comparison in WHERE Clauses:- When you need to compare a single value to a result from another query, utilize the subquery in the WHERE clause to enable dynamic data filtering.
+-- Column Creation and Aggregation:- Utilize subqueries to create new columns for real-time computations and to calculate intermediate values for aggregation functions within larger queries.
+-- Correlated Subqueries:- Utilize correlated subqueries to retrieve values from the outer query.
