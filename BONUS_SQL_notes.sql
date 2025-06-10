@@ -333,3 +333,9 @@ CREATE TEMP TABLE artists_clean AS
        SELECT *
        FROM artists
        WHERE birth_date IS NOT NULL;
+
+-- If you have a timestamp column and you need only the date portion use the DATE keyword. For example:-
+DATE(column_name)
+
+-- If you need to check if a column name starts with a vowel or not use:-
+LEFT(name, 1) IN ('a', 'e', 'i', 'o', 'u')
