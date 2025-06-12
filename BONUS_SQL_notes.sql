@@ -342,3 +342,8 @@ LEFT(name, 1) IN ('a', 'e', 'i', 'o', 'u')
 
 -- To format date column in SQL use TO_CHAR() function
 TO_CHAR(date_column, 'Mon-YYYY') -- will return date column as May-2023
+
+--The MAKE_DATE() function allows you to construct a date value from the specified year, month, and day values.
+--Here’s the syntax of the MAKE_DATE() function:
+-- MAKE_DATE( year int, month int, day int ) → date
+SELECT MAKE_DATE(2023,3, 25);-- returns 2023-03-25
