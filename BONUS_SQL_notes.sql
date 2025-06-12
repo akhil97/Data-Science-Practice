@@ -339,3 +339,6 @@ DATE(column_name)
 
 -- If you need to check if a column name starts with a vowel or not use:-
 LEFT(name, 1) IN ('a', 'e', 'i', 'o', 'u')
+
+-- To format date column in SQL use TO_CHAR() function
+TO_CHAR(date_column, 'Mon-YYYY') -- will return date column as May-2023
