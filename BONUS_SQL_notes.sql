@@ -346,4 +346,11 @@ TO_CHAR(date_column, 'Mon-YYYY') -- will return date column as May-2023
 --The MAKE_DATE() function allows you to construct a date value from the specified year, month, and day values.
 --Here’s the syntax of the MAKE_DATE() function:
 -- MAKE_DATE( year int, month int, day int ) → date
-SELECT MAKE_DATE(2023,3, 25);-- returns 2023-03-25
+SELECT MAKE_DATE(2023,3, 25); --returns 2023-03-25
+
+-- Find transactions that are made within 10minutes having same merchant_id, amount, credit_card_id. Don't use:-
+EXTRACT(MINUTE FROM b.timestamp) - EXTRACT(MINUTE FROM a.timestamp) <= 10
+-- If the transactions are made on a different day but the minute is same that does not mean a 10minute difference. Instead use LAG() window function
+-- and find out the previous timestamp. Then use INTERVAL keyword for PostgreSQL
+LAG(transaction_timestamp, 1) OVER(PARTITION BY merchant_id, credit_card_id, amount) AS previous_timestamp -- Then use INTERVAL in where clause
+WHERE (transaction_timestamp - previous_timestamp) <= INTERVAL '10 minutes'
