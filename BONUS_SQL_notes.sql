@@ -354,3 +354,7 @@ EXTRACT(MINUTE FROM b.timestamp) - EXTRACT(MINUTE FROM a.timestamp) <= 10
 -- and find out the previous timestamp. Then use INTERVAL keyword for PostgreSQL
 LAG(transaction_timestamp, 1) OVER(PARTITION BY merchant_id, credit_card_id, amount) AS previous_timestamp -- Then use INTERVAL in where clause
 WHERE (transaction_timestamp - previous_timestamp) <= INTERVAL '10 minutes'
+
+--  For PostgreSQL, you can use filter keyword to get sum of specific values in column. Example:-
+SUM(a.time_spent) FILTER(WHERE a.activity_type = 'send')
+SUM(a.time_spent) FILTER(WHERE a.activity_type = 'open')
