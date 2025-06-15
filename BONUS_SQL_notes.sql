@@ -358,3 +358,7 @@ WHERE (transaction_timestamp - previous_timestamp) <= INTERVAL '10 minutes'
 --  For PostgreSQL, you can use filter keyword to get sum of specific values in column. Example:-
 SUM(a.time_spent) FILTER(WHERE a.activity_type = 'send')
 SUM(a.time_spent) FILTER(WHERE a.activity_type = 'open')
+
+-- Finding rolling average in SQL syntax:-
+AVG(tweet_count) OVER(PARTITION BY user_id ORDER BY tweet_date ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)
+-- In this line rows between 2 preceding and current row gives the 3-day rolling average
