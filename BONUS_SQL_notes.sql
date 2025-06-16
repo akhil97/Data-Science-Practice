@@ -362,3 +362,7 @@ SUM(a.time_spent) FILTER(WHERE a.activity_type = 'open')
 -- Finding rolling average in SQL syntax:-
 AVG(tweet_count) OVER(PARTITION BY user_id ORDER BY tweet_date ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)
 -- In this line rows between 2 preceding and current row gives the 3-day rolling average
+
+-- Casting a column as a integer
+COUNT(email_id) :: DECIMAL
+-- This is particularly important when you have a division and it returns zero. In such cases use typecasting for numerator as mentioned above.
