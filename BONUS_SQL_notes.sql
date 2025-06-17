@@ -366,3 +366,35 @@ AVG(tweet_count) OVER(PARTITION BY user_id ORDER BY tweet_date ROWS BETWEEN 2 PR
 -- Casting a column as a integer
 COUNT(email_id) :: DECIMAL
 -- This is particularly important when you have a division and it returns zero. In such cases use typecasting for numerator as mentioned above.
+
+--Find customers who have brought at least 1 product from every product category:-
+SELECT DISTINCT c.customer_id
+FROM customer_contracts AS c JOIN products AS p ON c.product_id=p.product_id
+WHERE p.product_category IN ('Analytics', 'Containers', 'Compute')
+GROUP BY c.customer_id
+HAVING COUNT(c.customer_id) = 3;
+-- This is wrong as there could be customers who may have brought 2 products from 1 category and one from the other category with 0 products from last category
+-- So, to correct this find individual count of each product_category by:-
+WITH count_products AS (
+SELECT c.customer_id,
+COUNT(CASE WHEN p.product_category = 'Analytics' THEN p.product_id END) AS count_analytic,
+COUNT(CASE WHEN p.product_category = 'Containers' THEN p.product_id END) AS count_containers,
+COUNT(CASE WHEN p.product_category = 'Compute' THEN p.product_id END) AS count_compute
+FROM customer_contracts AS c JOIN products AS p ON c.product_id = p.product_id
+GROUP BY c.customer_id
+)
+SELECT customer_id
+FROM count_products
+WHERE count_analytic >= 1 AND count_containers >= 1 AND count_compute >= 1
+;
+-- A better solution would be to have the distinct count of product categories for each customer and comparing that with distinct product categories in product table:-
+WITH super_cloud AS (
+SELECT c.customer_id,
+COUNT(DISTINCT p.product_category) AS product_count
+FROM customer_contracts AS c JOIN products AS p ON c.product_id = p.product_id
+GROUP BY c.customer_id
+)
+SELECT customer_id
+FROM super_cloud
+WHERE product_count = (SELECT COUNT(DISTINCT product_category) FROM products)
+;
