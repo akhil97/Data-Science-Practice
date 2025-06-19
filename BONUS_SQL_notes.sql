@@ -407,3 +407,15 @@ JOIN transactions AS t3
 ON DATE(t3.transaction_date) = DATE(t2.transaction_date) + 1
 ORDER BY t1.user_id
 ;
+
+-- Using two joins using the same table but with different aliases. Whenever, you have a table which has two column names that need to be joined with another table
+-- you can call the same table twice in the same join operation by using two different aliases for the two different columns. For example:-
+SELECT
+  caller.country_id AS caller_country,
+  receiver.country_id AS receiver_country
+FROM phone_calls AS calls
+LEFT JOIN phone_info AS caller
+  ON calls.caller_id = caller.caller_id
+LEFT JOIN phone_info AS receiver
+  ON calls.receiver_id = receiver.caller_id;
+-- In the above query phone_info is used as both caller and receiver. For caller caller_id column is used for join. For receiver receiver_id is used for join.
