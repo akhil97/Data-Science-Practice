@@ -419,3 +419,15 @@ LEFT JOIN phone_info AS caller
 LEFT JOIN phone_info AS receiver
   ON calls.receiver_id = receiver.caller_id;
 -- In the above query phone_info is used as both caller and receiver. For caller caller_id column is used for join. For receiver receiver_id is used for join.
+
+-- We want to find the first recorded price for a particular company, such as Apple Inc. (AAPL). We can use the following SQL query:
+SELECT
+ quote_date,
+ price,
+ FIRST_VALUE(price) OVER (ORDER BY quote_date) AS first_price
+FROM stock_quotes
+WHERE symbol = 'AAPL';
+-- This query only selects the stock prices for Apple Inc. (symbol AAPL). It selects the quote date and the price on this date.
+-- It uses the FIRST_VALUE function to select the first recorded price for the company.
+-- All stock prices for Apple are sorted with OVER (ORDER BY quote_date).
+-- The FIRST_VALUE function returns the price for the first row in this sorting, that is the first price ever recorded for Apple.
