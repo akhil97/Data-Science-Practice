@@ -431,3 +431,36 @@ WHERE symbol = 'AAPL';
 -- It uses the FIRST_VALUE function to select the first recorded price for the company.
 -- All stock prices for Apple are sorted with OVER (ORDER BY quote_date).
 -- The FIRST_VALUE function returns the price for the first row in this sorting, that is the first price ever recorded for Apple.
+
+-- Imagine you want to swap the order_id for a given table which in such a way that 1 is swapped with 2, 3 is swapped with 4 and so on. Return the updated table with updated order_ids, items
+WITH order_counts AS (
+SELECT COUNT(order_id) AS total_orders
+FROM orders
+)
+SELECT
+CASE WHEN order_id % 2 != 0 AND order_id != total_orders THEN order_id + 1
+WHEN order_id % 2 != 0 AND order_id != total_orders THEN order_id
+WHEN order_id % 2 != 0 AND order_id = total_orders THEN order_id
+ELSE order_id - 1
+END as corrected_order_id,
+item
+FROM orders
+CROSS JOIN order_counts
+ORDER BY corrected_order_id
+;
+-- First you find out the order_counts (in a CTE) as you need to compare every order_id and check if it is equal to total orders. Then you have to cross join orders and
+-- orders_count to compare order_id and total orders from orders_counts CTE.
+
+-- PostgreSQL Correlated Subqueries
+--
+-- A correlated subquery is a subquery that contains a reference to a table (in the parent query) that also appears in the outer query.
+-- PostgreSQL evaluates from inside to outside. For example:-
+SELECT
+FROM table_a
+WHERE EXISTS (
+  SELECT
+  FROM table_b
+  WHERE table_a.column_1 = table_b.column_1
+)
+-- The EXISTS operator is used to test for the existence of any record in a sub query.
+-- The EXISTS operator returns TRUE if the sub query returns one or more records.
