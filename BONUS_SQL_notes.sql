@@ -464,3 +464,7 @@ WHERE EXISTS (
 )
 -- The EXISTS operator is used to test for the existence of any record in a sub query.
 -- The EXISTS operator returns TRUE if the sub query returns one or more records.
+
+-- To combine results and print it in a single line you can use CONCAT() function in SQL. It helps in returning results in the same row:-
+CONCAT(expression1, expression2, expression3, ...)
+expression1 || expression2 || expression3 or expression1 , expression2, expression3
