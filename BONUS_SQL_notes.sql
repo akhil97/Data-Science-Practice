@@ -468,3 +468,27 @@ WHERE EXISTS (
 -- To combine results and print it in a single line you can use CONCAT() function in SQL. It helps in returning results in the same row:-
 CONCAT(expression1, expression2, expression3, ...)
 expression1 || expression2 || expression3 or expression1 , expression2, expression3
+
+-- JUSTIFY_HOURS() Adjust interval, converting 24-hour time periods to days
+JUSTIFY_HOURS(interval '50 hours 10 minutes') → 2 days 02:10:00
+
+-- In PostgreSQL, DATE_PART() is a function used to extract specific parts (like year, month, day, etc.) from date and time values.
+-- It takes two arguments: the field you want to extract and the source (a date, time, or interval) from which to extract it.
+DATE_PART('field', source)
+--
+-- Key field values:
+--
+--     century: The century (e.g., 21 for the 21st century)
+--     decade: The decade (e.g., 202 for the 2020s)
+--     year: The year
+--     month: The month (1-12)
+--     day: The day of the month (1-31)
+--     hour: The hour (0-23)
+--     minute: The minute (0-59)
+--     second: The second (0-59)
+--     millisecond: The millisecond
+--     microsecond: The microsecond
+--     dow: Day of the week (0-6, Sunday is 0)
+--     doy: Day of the year (1-366)
+--     week: The ISO 8601 week number (1-53)
+--     epoch: Seconds since 1970-01-01 00:00:00 UTC --
