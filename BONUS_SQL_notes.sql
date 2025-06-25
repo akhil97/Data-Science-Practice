@@ -492,3 +492,17 @@ DATE_PART('field', source)
 --     doy: Day of the year (1-366)
 --     week: The ISO 8601 week number (1-53)
 --     epoch: Seconds since 1970-01-01 00:00:00 UTC --
+
+-- To filter the results of a UNION ALL operation in PostgreSQL, you can use one of these common methods:
+-- Wrap the UNION ALL in a Common Table Expression (CTE) or Subquery:
+--     This approach is often the most flexible and readable. You can treat the result of the UNION ALL as a temporary table and then apply your filtering conditions in the outer SELECT statement
+WITH CombinedResults AS (
+    SELECT column1, column2, ...
+    FROM table1
+    UNION ALL
+    SELECT column1, column2, ...
+    FROM table2
+)
+SELECT *
+FROM CombinedResults
+WHERE your_filter_condition;
