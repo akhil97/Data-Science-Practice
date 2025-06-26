@@ -506,3 +506,18 @@ WITH CombinedResults AS (
 SELECT *
 FROM CombinedResults
 WHERE your_filter_condition;
+
+-- The DATE_TRUNC() rounds down a date or timestamp to a specified unit of time. In other words, it trims the finer details and retains the specified unit.
+SELECT
+  message_id,
+  sent_date,
+  DATE_TRUNC('month', sent_date) AS truncated_to_month,
+  DATE_TRUNC('day', sent_date) AS truncated_to_day,
+  DATE_TRUNC('hour', sent_date) AS truncated_to_hour
+FROM messages
+LIMIT 3;
+-- Here's what's happening in the results:
+--
+-- truncated_to_month: It rounds down the date to the beginning of the month. For example, if a message was sent on August 3rd, 2022 at 16:43, it's snapped to August 1st, 2022, while retaining the year and month.
+-- truncated_to_day: It rounds down the date to the beginning of the day. The same August 3rd message becomes August 3rd, 2022, with the hour, minute, and seconds set to zero.
+-- truncated_to_hour: It rounds down the time to the beginning of the hour. The message becomes August 3rd, 2022 at 16:00, with the minutes and seconds set to zero.
