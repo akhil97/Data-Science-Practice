@@ -521,3 +521,17 @@ LIMIT 3;
 -- truncated_to_month: It rounds down the date to the beginning of the month. For example, if a message was sent on August 3rd, 2022 at 16:43, it's snapped to August 1st, 2022, while retaining the year and month.
 -- truncated_to_day: It rounds down the date to the beginning of the day. The same August 3rd message becomes August 3rd, 2022, with the hour, minute, and seconds set to zero.
 -- truncated_to_hour: It rounds down the time to the beginning of the hour. The message becomes August 3rd, 2022 at 16:00, with the minutes and seconds set to zero.
+
+-- Find median searches for users when searches and their corresponding frequencies(num_users) are given:-
+WITH frequencies AS (
+SELECT *,
+SUM(num_users) OVER(ORDER BY searches) AS cumulative_frequency,
+SUM(num_users) OVER() AS total_frequency
+FROM search_frequency
+)
+SELECT ROUND(AVG(searches), 1) AS median
+FROM frequencies
+WHERE total_frequency/2 BETWEEN (cumulative_frequency - num_users) AND cumulative_frequency
+;
+-- First we find the cumulative and total_frequencies in a CTE.
+-- Then, we can find the total_frequency/2 and check if that is between cumulative_frequency-frequency and cumulative_frequency
