@@ -542,3 +542,49 @@ WHERE total_frequency/2 BETWEEN (cumulative_frequency - num_users) AND cumulativ
 -- For example:
 SELECT * FROM generate_series(1,10);
 -- Will output the rows: 1,2,3,4,5,6,7,8,9,10
+
+-- you cannot have an ORDER BY clause for each SELECT statement when they are combined with UNION.
+-- An ORDER BY clause is meant to be applied only once to the final result set after the UNION operation is complete.
+SELECT ...
+FROM OCCUPATIONS
+ORDER BY Name -- This ORDER BY is not allowed here before a UNION
+UNION
+SELECT ...
+FROM OCCUPATIONS
+GROUP BY Occupation
+ORDER BY COUNT(Occupation) -- This ORDER BY is also problematic
+;
+--Even if the syntax were allowed, a single ORDER BY clause at the very end would apply to all rows, both the individual names and the summary counts. You want to sort the names alphabetically (ORDER BY Name) and the summaries numerically (ORDER BY COUNT(Occupation)). A single ORDER BY cannot achieve this "split" sorting on its own.
+--The Solution: Use Sorting Keys
+--To get the correctly sorted output, you need to combine the results and create special "sorting key" columns that allow a single, final ORDER BY clause to arrange the data as you intend.
+--The strategy is to:
+--    Assign a SortGroup number (1 for names, 2 for summaries) to control which set appears first.
+--    Use another column to handle the specific sorting within each group (alphabetical for names, numerical for summaries).
+--    Combine the two queries using UNION ALL (which is more efficient than UNION because the two data sets are already distinct).
+--    Apply a single ORDER BY to the final result using your sorting keys.
+--Here is the corrected query:
+-- Use a subquery or CTE to combine the results with sorting keys
+SELECT OutputText
+FROM (
+    -- Part 1: Individual Names
+    SELECT
+        CONCAT(Name, '(', LEFT(Occupation, 1), ')') AS OutputText,
+        1 AS SortGroup, -- First group to be sorted
+        Name AS SortCriteria
+    FROM
+        OCCUPATIONS
+
+    UNION ALL
+
+    -- Part 2: Occupation Summaries
+    SELECT
+        CONCAT('There are a total of ', COUNT(Occupation), ' ', LOWER(Occupation), 's.'),
+        2 AS SortGroup, -- Second group to be sorted
+        CAST(COUNT(Occupation) AS CHAR) -- Sort by the count, but cast to character to match the `Name` data type
+    FROM
+        OCCUPATIONS
+    GROUP BY
+        Occupation
+) AS CombinedResults
+ORDER BY
+    SortGroup, SortCriteria;
