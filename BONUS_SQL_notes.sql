@@ -535,3 +535,10 @@ WHERE total_frequency/2 BETWEEN (cumulative_frequency - num_users) AND cumulativ
 ;
 -- First we find the cumulative and total_frequencies in a CTE.
 -- Then, we can find the total_frequency/2 and check if that is between cumulative_frequency-frequency and cumulative_frequency
+
+-- generate_series([start], [stop], [{optional}step/interval]);
+-- Generate a series of numbers in postgres by using the generate_series function.
+-- The function requires either 2 or 3 inputs. The first input, [start], is the starting point for generating your series. [stop] is the value that the series will stop at. The series will stop once the values pass the [stop] value. The third value determines how much the series will increment for each step the default it 1 for number series
+-- For example:
+SELECT * FROM generate_series(1,10);
+-- Will output the rows: 1,2,3,4,5,6,7,8,9,10
