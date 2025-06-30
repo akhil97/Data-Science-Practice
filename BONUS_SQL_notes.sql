@@ -588,3 +588,37 @@ FROM (
 ) AS CombinedResults
 ORDER BY
     SortGroup, SortCriteria;
+
+-- 1. Ranking Names Within Each Occupation
+-- The first part of the query is a Common Table Expression (CTE) named occupation_rank.
+-- SQL
+--
+WITH occupation_rank AS (
+ SELECT
+      name,
+      occupation,
+         ROW_NUMBER() OVER(PARTITION BY occupation ORDER BY name ASC) as rn
+     FROM occupations
+)
+-- Lest say you are asked to Pivot the Occupation column in OCCUPATIONS so that each Name is sorted alphabetically and displayed underneath its corresponding Occupation. The output should consist of four columns (Doctor, Professor, Singer, and Actor) in that specific order, with their respective names listed alphabetically under each column.
+-- This code uses the ROW_NUMBER() window function to assign a rank to each person.
+-- PARTITION BY occupation: This divides the data into separate groups for each occupation (all doctors in one group, all singers in another, etc.).
+-- ORDER BY name ASC: Within each group, it sorts the people alphabetically by name.
+-- ROW_NUMBER() ... as rn: It then assigns a sequential number (rn) to each person in their group.
+-- The result is that the first doctor alphabetically gets rn=1, the first professor alphabetically gets rn=1, the second doctor gets rn=2, and so on.
+-- 2. Grouping and Pivoting
+-- The final SELECT statement takes the ranked data and pivots it.
+ SELECT
+    MAX(CASE WHEN occupation = 'Doctor' THEN name END) AS doctor_names,
+    MAX(CASE WHEN Occupation = 'Professor' THEN name END),
+    MAX(CASE WHEN Occupation = 'Singer' THEN name END),
+    MAX(CASE WHEN Occupation = 'Actor' THEN name END)
+FROM occupation_rank
+GROUP BY rn
+ORDER BY rn;
+--     GROUP BY rn: This groups all the rows that have the same rank number. For example, the first doctor, first professor, first singer, and first actor (who all have rn=1) are put into a single group.
+--     MAX(CASE ...): This is the clever part that does the pivot. For each group of same-ranked people:
+--         The CASE WHEN occupation = 'Doctor' THEN name END statement checks if the person in the group is a doctor. If so, it returns their name; otherwise, it returns NULL.
+--         The MAX() function then picks out that single name from the group (since there's only one doctor for each rank) and places it into the doctor_names column.
+--         This pattern is repeated for each occupation, creating a separate column for each.
+-- The final ORDER BY rn ensures the rows are listed in alphabetical order.
