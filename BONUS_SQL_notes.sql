@@ -622,3 +622,20 @@ ORDER BY rn;
 --         The MAX() function then picks out that single name from the group (since there's only one doctor for each rank) and places it into the doctor_names column.
 --         This pattern is repeated for each occupation, creating a separate column for each.
 -- The final ORDER BY rn ensures the rows are listed in alphabetical order.
+
+-- How to print * patterns in SQL in increasing order,
+DECLARE @var INT-- first declare all the variables with datatype like (int)
+        SELECT @var = 1 -- -- select the variable and initialize with value
+        WHILE @var <= 5 -- condition like @variable < 5
+        BEGIN  -- begin
+        PRINT replicate('* ', @var) -- replicate insert the *
+              SET @var = @var + 1 -- in increment/decrement @variable= @variable+1
+        END
+-- Similarly, for decreasing order,
+DECLARE @var INT
+        SELECT @var = 5
+        WHILE @var > 0
+        BEGIN
+        PRINT replicate('* ', @var)
+              SET @var = @var - 1
+        END
