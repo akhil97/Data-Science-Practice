@@ -639,3 +639,14 @@ DECLARE @var INT
         PRINT replicate('* ', @var)
               SET @var = @var - 1
         END
+
+-- Many SQL databases provide built-in functions for string aggregation, often used with the GROUP BY clause to concatenate values within groups.
+-- MySQL: GROUP_CONCAT() is a powerful function to concatenate values within a group, often used with GROUP BY.
+SELECT department, GROUP_CONCAT(last_name SEPARATOR ', ') FROM employees GROUP BY department;
+--      This query groups employees by department and concatenates the last names of employees within each department, separated by a comma and a space.
+--      PostgreSQL and SQL Server: STRING_AGG() performs a similar function to GROUP_CONCAT(), allowing you to specify the separator.
+SELECT user_id, STRING_AGG(comment, '; ') AS combined_comments FROM comments GROUP BY user_id;
+--      This query groups comments by user ID and concatenates the comments for each user, separated by a semicolon and a space.
+--      Oracle: LISTAGG() serves the same purpose as STRING_AGG() and GROUP_CONCAT(), allowing you to concatenate strings within groups.
+SELECT user_id, LISTAGG(comment, '; ') WITHIN GROUP (ORDER BY comment) AS combined_comments FROM comments GROUP BY user_id;
+--      This query groups comments by user ID, concatenates the comments for each user (ordered by comment), and separates them with a semicolon and a space.
