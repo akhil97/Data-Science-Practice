@@ -650,3 +650,27 @@ SELECT user_id, STRING_AGG(comment, '; ') AS combined_comments FROM comments GRO
 --      Oracle: LISTAGG() serves the same purpose as STRING_AGG() and GROUP_CONCAT(), allowing you to concatenate strings within groups.
 SELECT user_id, LISTAGG(comment, '; ') WITHIN GROUP (ORDER BY comment) AS combined_comments FROM comments GROUP BY user_id;
 --      This query groups comments by user ID, concatenates the comments for each user (ordered by comment), and separates them with a semicolon and a space.
+
+-- Write a query to print all prime numbers less than or equal to 1000. Print your result on a single line, and use the ampersand (&) character as your separator (instead of a space).
+DECLARE @I INT=2
+DECLARE @PRIME INT=0
+DECLARE @OUTPUT TABLE (NUM INT)
+WHILE @I <= 1000
+BEGIN
+    DECLARE @J INT = @I-1
+    SET @PRIME = 1
+    WHILE @J > 1
+    BEGIN
+        IF @I % @J = 0
+        BEGIN
+            SET @PRIME = 0
+        END
+        SET @J = @J - 1
+    END
+    IF @PRIME = 1
+    BEGIN
+        INSERT @OUTPUT VALUES (@I)
+    END
+    SET @I = @I + 1
+END
+SELECT STRING_AGG(NUM, '&') FROM @OUTPUT
