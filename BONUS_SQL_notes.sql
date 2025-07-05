@@ -674,3 +674,12 @@ BEGIN
     SET @I = @I + 1
 END
 SELECT STRING_AGG(NUM, '&') FROM @OUTPUT
+
+-- Additional window functions
+-- PERCENT_RANK() :- Assigns the rank number of each row in a partition as a percentage.
+-- Tied values are given the same rank. Computed as the fraction of rows less than the current row, i.e., the rank of row divided by the largest rank in the partition.
+-- NTILE(n_buckets) :- Distributes the rows of a partition into a specified number of buckets.
+-- For example, if we perform the window function NTILE(5) on a table with 100 rows, they will be in bucket 1, rows 21 to 40 in bucket 2, rows 41 to 60 in bucket 3 etc.
+-- CUME_DIST() The cumulative distribution: the percentage of rows less than or equal to the current row. It returns a value larger than 0 and at most 1. Tied values are given the same cumulative distribution value.
+
+
