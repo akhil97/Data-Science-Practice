@@ -682,4 +682,11 @@ SELECT STRING_AGG(NUM, '&') FROM @OUTPUT
 -- For example, if we perform the window function NTILE(5) on a table with 100 rows, they will be in bucket 1, rows 21 to 40 in bucket 2, rows 41 to 60 in bucket 3 etc.
 -- CUME_DIST() The cumulative distribution: the percentage of rows less than or equal to the current row. It returns a value larger than 0 and at most 1. Tied values are given the same cumulative distribution value.
 
-
+-- Let's say you want to find out users who made some submission every single day (from Day 1 to current date). You can use Dense_Rank in the following way:-
+SELECT submission_date, COUNT(*) AS cnt
+FROM ( SELECT submission_date,
+       DENSE_RANK() OVER (PARTITION BY hacker_id ORDER BY submission_date) AS rnk FROM cte) ranked
+WHERE rnk = DAY(submission_date)
+GROUP BY submission_date
+-- If you look at this query, We use DENSE_RANK() to find hackers who submitted on consecutive days starting from March 1.
+-- We match this rank to the day of the month (DAY(submission_date)), which tells us whether a hacker has maintained a perfect submission streak.
