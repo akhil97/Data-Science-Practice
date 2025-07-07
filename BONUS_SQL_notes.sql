@@ -676,11 +676,11 @@ END
 SELECT STRING_AGG(NUM, '&') FROM @OUTPUT
 
 -- Additional window functions
--- PERCENT_RANK() :- Assigns the rank number of each row in a partition as a percentage.
+ PERCENT_RANK() --:- Assigns the rank number of each row in a partition as a percentage.
 -- Tied values are given the same rank. Computed as the fraction of rows less than the current row, i.e., the rank of row divided by the largest rank in the partition.
--- NTILE(n_buckets) :- Distributes the rows of a partition into a specified number of buckets.
+ NTILE(n_buckets) --:- Distributes the rows of a partition into a specified number of buckets.
 -- For example, if we perform the window function NTILE(5) on a table with 100 rows, they will be in bucket 1, rows 21 to 40 in bucket 2, rows 41 to 60 in bucket 3 etc.
--- CUME_DIST() The cumulative distribution: the percentage of rows less than or equal to the current row. It returns a value larger than 0 and at most 1. Tied values are given the same cumulative distribution value.
+ CUME_DIST() --The cumulative distribution: the percentage of rows less than or equal to the current row. It returns a value larger than 0 and at most 1. Tied values are given the same cumulative distribution value.
 
 -- Let's say you want to find out users who made some submission every single day (from Day 1 to current date). You can use Dense_Rank in the following way:-
 SELECT submission_date, COUNT(*) AS cnt
@@ -690,3 +690,11 @@ WHERE rnk = DAY(submission_date)
 GROUP BY submission_date
 -- If you look at this query, We use DENSE_RANK() to find hackers who submitted on consecutive days starting from March 1.
 -- We match this rank to the day of the month (DAY(submission_date)), which tells us whether a hacker has maintained a perfect submission streak.
+
+-- You can use QUALIFY keyword in SQL while using window functions to print out the query result without writing a second query
+SELECT employee_id, department, salary,
+       RANK() OVER (PARTITION BY department ORDER BY salary DESC) AS salary_rank  -- Window function
+FROM employee_data
+QUALIFY salary_rank <= 5;  -- Filtering based on the window function result
+
+
