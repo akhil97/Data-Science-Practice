@@ -697,4 +697,31 @@ SELECT employee_id, department, salary,
 FROM employee_data
 QUALIFY salary_rank <= 5;  -- Filtering based on the window function result
 
+-- Pivoting involves rotating a table by converting unique values from a single column into multiple columns. This rearrangement turns rows into column values, often involving aggregations on remaining columns.
+-- On the other hand, un-pivoting reverses this operation by transforming columns into row values. This is an example of pivoting:-
+SELECT
+  superhero_alias,
+  MAX(CASE WHEN platform = 'Instagram' THEN engagement_rate END) AS instagram_engagement_rate,
+  MAX(CASE WHEN platform = 'Twitter' THEN engagement_rate END) AS twitter_engagement_rate,
+  MAX(CASE WHEN platform = 'TikTok' THEN engagement_rate END) AS tiktok_engagement_rate,
+  MAX(CASE WHEN platform = 'YouTube' THEN engagement_rate END) AS youtube_engagement_rate
+FROM marvel_avengers
+WHERE superhero_alias IN ('Iron Man', 'Captain America', 'Black Widow', 'Thor')
+GROUP BY superhero_alias
+ORDER BY superhero_alias;
+-- This is a case of unpivoting:-
+SELECT
+  superhero_alias,
+  platform,
+  CASE platform
+    WHEN 'Instagram' THEN engagement_rate
+    WHEN 'Twitter' THEN engagement_rate
+    WHEN 'YouTube' THEN engagement_rate
+    WHEN 'TikTok' THEN engagement_rate
+  END AS engagement_rate
+FROM marvel_avengers
+WHERE superhero_alias IN ('Iron Man', 'Captain America', 'Black Widow', 'Thor')
+ORDER BY superhero_alias;
+
+
 
