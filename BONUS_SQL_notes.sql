@@ -709,7 +709,7 @@ FROM marvel_avengers
 WHERE superhero_alias IN ('Iron Man', 'Captain America', 'Black Widow', 'Thor')
 GROUP BY superhero_alias
 ORDER BY superhero_alias;
--- This is a case of unpivoting:-
+-- This is a case of un-pivoting:-
 SELECT
   superhero_alias,
   platform,
@@ -723,5 +723,10 @@ FROM marvel_avengers
 WHERE superhero_alias IN ('Iron Man', 'Captain America', 'Black Widow', 'Thor')
 ORDER BY superhero_alias;
 
+-- Find all the users who were active for 3 consecutive days or more.
+select a.user_id
+from sf_events as a, sf_events as b, sf_events as c
+where datediff(b.record_date, a.record_date) = 1 and datediff(c.record_date, b.record_date) = 1;
+-- You can use different aliases for a single table without using join.
 
 
