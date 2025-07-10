@@ -729,4 +729,17 @@ from sf_events as a, sf_events as b, sf_events as c
 where datediff(b.record_date, a.record_date) = 1 and datediff(c.record_date, b.record_date) = 1;
 -- You can use different aliases for a single table without using join.
 
+-- Find the best-selling item for each month, where total_sales_amount = unitprice*quantity
+with toal_monthly_paid as (
+select date_part('month', invoicedate) as month, description, sum(unitprice*quantity) as total_paid,
+rank() over(partition by date_part('month', invoicedate) order by sum(unitprice*quantity) desc) as rnk
+from online_retail
+group by month, description
+)
+select month, description, total_paid
+from toal_monthly_paid
+where rnk = 1
+;
+-- Here, first you find the total_amount_paid for each month and use the rank function to rank them each month by partitioning by month and ordering by total_amount_paid in descending order
+
 
