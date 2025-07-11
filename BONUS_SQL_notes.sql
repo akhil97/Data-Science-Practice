@@ -742,4 +742,29 @@ where rnk = 1
 ;
 -- Here, first you find the total_amount_paid for each month and use the rank function to rank them each month by partitioning by month and ordering by total_amount_paid in descending order
 
-
+-- Calculate each user's average session time, where a session is defined as the time difference between a page_load and a page_exit.
+-- Assume each user has only one session per day. If there are multiple page_load or page_exit events on the same day, use only the latest page_load and the earliest page_exit, ensuring the page_load occurs before the page_exit.
+-- Output the user_id and their average session time.
+with days_logs as (
+select *,
+extract(day from timestamp) as day
+from facebook_web_log
+)
+select a.user_id, avg(exittime - loadtime)
+from (
+    select user_id, timestamp loadtime, action,
+    rank() over(partition by user_id, day order by timestamp desc) as loadrank
+    from days_logs
+    where action = 'page_load'
+) a
+join (
+    select user_id, timestamp exittime, action,
+    rank() over(partition by user_id, day order by timestamp) as exitrank
+    from days_logs
+    where action = 'page_exit'
+) b
+on a.user_id = b.user_id
+where a.loadrank = 1 and b.exitrank = 1
+group by a.user_id
+;
+-- Use page_load and page_exit as two-different tables and join them on the basis of user_id. For partitioning using day use the day column as extract(day from timestamp)
