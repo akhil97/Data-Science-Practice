@@ -768,3 +768,22 @@ where a.loadrank = 1 and b.exitrank = 1
 group by a.user_id
 ;
 -- Use page_load and page_exit as two-different tables and join them on the basis of user_id. For partitioning using day use the day column as extract(day from timestamp)
+
+-- Calculate the friend acceptance rate for each date when friend requests were sent. A request is sent if action = sent and accepted if action = accepted.
+-- If a request is not accepted, there is no record of it being accepted in the table.
+-- The output will only include dates where requests were sent and at least one of them was accepted, as the acceptance rate can only be calculated for those dates.
+-- Show the results ordered from the earliest to the latest date.
+with sent_cte as (
+select date, user_id_sender, user_id_receiver
+from fb_friend_requests
+where action = 'sent'
+),accepted_cte as (
+select date, user_id_sender, user_id_receiver
+from fb_friend_requests
+where action = 'accepted'
+)
+select s.date, 1.0*count(a.user_id_receiver)/count(s.user_id_receiver) as percentage_acceptance
+from sent_cte as s left join accepted_cte as a on a.user_id_sender = s.user_id_sender and
+a.user_id_receiver = s.user_id_receiver
+group by s.date
+-- Create two different CTEs for sent and accepted and join them. We use left join to count sent requests that did not receive any acceptance.
