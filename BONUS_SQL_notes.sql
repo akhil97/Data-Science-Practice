@@ -787,3 +787,17 @@ from sent_cte as s left join accepted_cte as a on a.user_id_sender = s.user_id_s
 a.user_id_receiver = s.user_id_receiver
 group by s.date
 -- Create two different CTEs for sent and accepted and join them. We use left join to count sent requests that did not receive any acceptance.
+
+-- Identify returning active users by finding users who made a second purchase within 1 to 7 days after their first purchase.
+-- Ignore same-day purchases. Output a list of these user_ids.
+with ordered_transactions as (
+select user_id, created_at::date as trans_date,
+lag(created_at::date) over(partition by user_id order by created_at) as prev_transaction,
+row_number() over(partition by user_id order by created_at) as rn
+from amazon_transactions
+)
+select distinct user_id
+from ordered_transactions
+where rn = 2 and trans_date - prev_transaction between 1 and 7
+;
+-- Always use lag or lead window function where in the question there is something mentioned about the last 7 days. You can use between keyword for range.
