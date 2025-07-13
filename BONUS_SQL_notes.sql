@@ -801,3 +801,22 @@ from ordered_transactions
 where rn = 2 and trans_date - prev_transaction between 1 and 7
 ;
 -- Always use lag or lead window function where in the question there is something mentioned about the last 7 days. You can use between keyword for range.
+
+-- Find the total number of downloads for paying and non-paying users by date. Include only records where non-paying customers have more downloads than paying customers.
+-- The output should be sorted by earliest date first and contain 3 columns date, non-paying downloads, paying downloads.
+with total_downloads as (
+select df.date, sum(case when paying_customer = 'yes' then downloads end) as paying,
+sum(case when paying_customer = 'no' then downloads end) as non_paying
+from ms_user_dimension as ud
+join ms_acc_dimension as ad on ud.acc_id = ad.acc_id
+join ms_download_facts as df on ud.user_id = df.user_id
+group by df.date
+order by df.date
+)
+select date, non_paying, paying
+from total_downloads
+where non_paying > paying
+order by date
+;
+-- In this question whether a user is a paying customer or not is defined in ms_acc_dimension where a particular account_id is a paying customer or not.
+-- However, the number of downloads is defined in ms_download_facts where the number of downloads for a particular user_id.
