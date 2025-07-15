@@ -838,3 +838,19 @@ having sum(prorated_employee_salary) > budget
 order by title
 ;
 -- In this question since it is mentioned that the value needs to be rounded up to the nearest dollar you use ceiling instead of round function.
+
+-- Find the genre of the person with the most number of oscar winnings.
+-- If there are more than one person with the same number of oscar wins, return the first one in alphabetic order based on their name. Use the names as keys when joining the tables.
+with count_winners as (
+select osn.nominee, ni.top_genre,
+count(case when osn.winner = 'TRUE' then osn.nominee end) as num_winners
+from oscar_nominees as osn join nominee_information as ni on osn.nominee = ni.name
+group by osn.nominee, ni.top_genre
+)
+select top_genre
+from count_winners
+where num_winners in (select max(num_winners) from count_winners)
+order by nominee
+;
+-- The key in where clause is to use the keyword in instead of =. So, instead of where num_winners = (select max(num_winners) from count_winners) you will use
+-- where num_winners in (select max(num_winners) from count_winners) so that you are handling the case for multiple winners. If max returns multiple winner use in else use =
