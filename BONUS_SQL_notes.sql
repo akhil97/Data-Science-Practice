@@ -854,3 +854,37 @@ order by nominee
 ;
 -- The key in where clause is to use the keyword in instead of =. So, instead of where num_winners = (select max(num_winners) from count_winners) you will use
 -- where num_winners in (select max(num_winners) from count_winners) so that you are handling the case for multiple winners. If max returns multiple winner use in else use =
+
+-- You have the marketing_campaign table, which records in-app purchases by users. Users making their first in-app purchase enter a marketing campaign, where they see call-to-actions for more purchases. Find how many users made additional purchases due to the campaign's success.
+-- The campaign starts one day after the first purchase. Users with only one or multiple purchases on the first day do not count, nor do users who later buy only the same products from their first day.
+/*
+CTE 1: Find the first purchase date for each user
+*/
+with user_first_day as (
+select user_id,
+min(cast(created_at as date)) as first_purchase_date
+from marketing_campaign
+group by user_id
+) /*
+CTE 2: Create a list of products each user bought on their first day
+*/
+, first_day_products as (
+select distinct c.user_id, c.product_id
+from marketing_campaign as c
+join user_first_day as f on c.user_id = f.user_id
+where cast(c.created_at as date) = f.first_purchase_date
+) /*
+Final SELECT: Count users who bought a new product after their first day
+*/
+select count(distinct c.user_id) as user_count
+from marketing_campaign as c
+join user_first_day as f on c.user_id = f.user_id
+where cast(c.created_at as date) > f.first_purchase_date
+ /*
+  Condition 2: The product purchased after the first day must NOT be in the user's list of first-day products
+  */
+and c.product_id not in (
+select product_id
+from first_day_products as fdp
+where fdp.user_id = c.user_id
+);
