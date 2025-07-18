@@ -897,3 +897,16 @@ from google_gmail_emails
 group by from_user
 ;
 -- There is no need to partition by from_user while writing the window function for this query.
+
+-- Given the users' sessions logs on a particular day, calculate how many hours each user was active that day. Note: The session starts when state=1 and ends when state=0.
+with cust_times as (
+select *,
+lag(timestamp) over (partition by cust_id order by timestamp asc) as lag_value
+from cust_tracking
+)
+select cust_id, (sum(timestamp::time -lag_value::time)/3600) as hours
+from cust_times
+where state=0 and lag_value is not null
+group by cust_id;
+;
+-- Use ::time if there is a problem with date data type columns that have both date and time.
