@@ -888,3 +888,12 @@ select product_id
 from first_day_products as fdp
 where fdp.user_id = c.user_id
 );
+
+-- Find the email activity rank for each user. Email activity rank is defined by the total number of emails sent. The user with the highest number of emails sent will have a rank of 1, and so on. Output the user, total emails, and their activity rank.
+-- Order records first by the total emails in descending order. Then, sort users with the same number of emails in alphabetical order by their username. In your rankings, return a unique value (i.e., a unique rank) even if multiple users have the same number of emails.
+select from_user, count(to_user) as total_emails,
+row_number() over(order by count(to_user) desc, from_user asc) as row_number
+from google_gmail_emails
+group by from_user
+;
+-- There is no need to partition by from_user while writing the window function for this query.
