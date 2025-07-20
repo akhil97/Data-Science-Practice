@@ -910,3 +910,28 @@ where state=0 and lag_value is not null
 group by cust_id;
 ;
 -- Use ::time if there is a problem with date data type columns that have both date and time.
+
+-- You are given a dataset of actors and the films they have been involved in, including each film's release date and rating. For each actor, calculate the difference between the rating of their most recent film and their average rating across all previous films (the average rating excludes the most recent one).
+-- Return a list of actors along with their average lifetime rating, the rating of their most recent film, and the difference between the two ratings. If an actor has only one film, return 0 for the difference and their only film’s rating for both the average and latest rating fields.
+with latest_films as (
+select actor_name, film_rating,
+row_number() over(partition by actor_name order by release_date desc) as rn
+from actor_rating_shift
+), latest_ratings as (
+select actor_name, film_rating as latest_rating
+from latest_films
+where rn = 1
+), prev_avg_ratings as (
+select actor_name, avg(film_rating) as avg_rating
+from latest_films
+where rn > 1
+group by actor_name
+)
+select l.actor_name,
+coalesce(p.avg_rating, l.latest_rating) as avg_rating,
+l.latest_rating,
+round((l.latest_rating - coalesce(p.avg_rating, l.latest_rating))::numeric, 2) as rating_difference
+from latest_ratings as l left join prev_avg_ratings as p on l.actor_name = p.actor_name
+order by l.actor_name
+;
+-- First calculate the latest_ratings and prev_avg_ratings in 2 ctes, then join these ctes on actor_names and compute the difference using coalesce.
