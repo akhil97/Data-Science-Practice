@@ -935,3 +935,20 @@ from latest_ratings as l left join prev_avg_ratings as p on l.actor_name = p.act
 order by l.actor_name
 ;
 -- First calculate the latest_ratings and prev_avg_ratings in 2 ctes, then join these ctes on actor_names and compute the difference using coalesce.
+
+-- Compare the total number of comments made by users in each country between December 2019 and January 2020. For each month, rank countries by total comments using dense ranking (i.e., avoid gaps between ranks) in descending order. Then, return the names of the countries whose rank improved from December to January.
+with country_comments as (
+select ac.country, extract(month from cc.created_at) as month,
+count(cc.number_of_comments) as total_comments
+from fb_comments_count as cc join fb_active_users as ac on cc.user_id = ac.user_id
+where cc.created_at between '2019-12-01' and '2020-01-31'
+group by ac.country, extract(month from cc.created_at)
+), ranked_comments as (
+select *,
+dense_rank() over(partition by month order by total_comments desc) as drnk
+from country_comments
+)
+select b.country
+from ranked_comments as a, ranked_comments as b
+where a.country = b.country and a.month = 1 and b.month = 12 and a.drnk < b.drnk
+;
