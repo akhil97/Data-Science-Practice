@@ -952,3 +952,19 @@ select b.country
 from ranked_comments as a, ranked_comments as b
 where a.country = b.country and a.month = 1 and b.month = 12 and a.drnk < b.drnk
 ;
+
+-- Given a table of purchases by date, calculate the month-over-month percentage change in revenue. The output should include the year-month date (YYYY-MM) and percentage change, rounded to the 2nd decimal point, and sorted from the beginning of the year to the end of the year.
+-- The percentage change column will be populated from the 2nd month forward and can be calculated as ((this month's revenue - last month's revenue) / last month's revenue)*100.
+with monthly_revenue as (
+select to_char(created_at, 'YYYY-MM') as year_month, sum(value) as total_revenue
+from sf_transactions
+group by to_char(created_at, 'YYYY-MM')
+), previous_month_revenue as (
+select *,
+lag(total_revenue, 1) over(order by year_month) as prev_month_revenue
+from monthly_revenue
+)
+select year_month, round((1.0*(total_revenue - prev_month_revenue)/prev_month_revenue)*100, 2) as revenue_diff_pct
+from previous_month_revenue
+;
+-- Use date_format(created_at, '%YYYY-%MM') for SQL and to_char(created_at, 'YYYY-MM') for PostgreSQL.
