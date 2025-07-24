@@ -983,3 +983,12 @@ from ranked_businesses
 where drnk <= 5
 ;
 -- If all the states have different results then a limit 5 clause would work but because we want to have the top5 states we use dense rank <= 5 which returns states with the same ranks as well.
+-- Find the number of times the exact words bull and bear appear in the contents column. Count all occurrences, even if they appear multiple times within the same row. Matches should be case-insensitive and only count exact words, that is, exclude substrings like bullish or bearing.
+-- Output the word (bull or bear) and the corresponding number of occurrences.
+select 'bull' as word, count(filename) as nentry
+from google_file_store
+where contents like '%bull%'
+union
+select 'bear' as word, count(filename) as nentry
+from google_file_store
+where contents like '%bear%';
