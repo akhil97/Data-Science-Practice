@@ -1020,3 +1020,16 @@ where drnk <= 3
 ;
 -- If the visit is consecutive (the difference is 1 day), it assigns a 0. If there's a gap (the difference is not 1 day), or if it's the user's very first visit in the dataset, it assigns a 1. This 1 effectively marks the beginning of a new streak.
 -- count(*) + 1 as streak_length: This counts the number of rows in the group (which are the consecutive days) and adds 1 back (for the starting day that was filtered out) to get the total length of the streak.
+
+-- Find the average total compensation based on employee titles and gender. Total compensation is calculated by adding both the salary and bonus of each employee. However, not every employee receives a bonus so disregard employees without bonuses in your calculation. Employee can receive more than one bonus.
+-- Output the employee title, gender (i.e., sex), along with the average total compensation.
+with total_bonus_and_salary as (
+select worker_ref_id, sum(bonus) as total_bonus
+from sf_bonus
+group by worker_ref_id
+)
+select e.employee_title, e.sex, avg(e.salary + b.total_bonus) as avg_compensation
+from sf_employee as e join total_bonus_and_salary as b on e.id = b.worker_ref_id
+group by e.employee_title, e.sex
+;
+-- Find total bonus for each employee and then find average compensation by title and gender instead of finding average compensation directly by title and gender.
