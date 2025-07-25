@@ -992,3 +992,31 @@ union
 select 'bear' as word, count(filename) as nentry
 from google_file_store
 where contents like '%bear%';
+
+-- Provided a table with user id and the dates they visited the platform, find the top 3 users with the longest continuous streak of visiting the platform as of August 10, 2022. Output the user ID and the length of the streak.
+-- In case of a tie, display all users with the top three longest streaks.
+with unique_visits as (
+select distinct *
+from user_streaks
+where date_visited <= '2022-08-10'
+), detected_streaks as (
+select *,
+case when date_visited - lag(date_visited, 1) over(partition by user_id order by date_visited) = 1 then 0 else 1 end as streak_marker
+from unique_visits
+), streak_ids as (
+select *, sum(streak_marker) over(partition by user_id order by date_visited) as streak_id
+from detected_streaks
+), ranked_streak_lengths as (
+select user_id, streak_id,
+count(*) + 1 as streak_length,
+dense_rank() over(order by count(*) + 1 desc) as drnk
+from streak_ids
+where streak_marker = 0
+group by user_id, streak_id
+)
+select user_id, streak_length
+from ranked_streak_lengths
+where drnk <= 3
+;
+-- If the visit is consecutive (the difference is 1 day), it assigns a 0. If there's a gap (the difference is not 1 day), or if it's the user's very first visit in the dataset, it assigns a 1. This 1 effectively marks the beginning of a new streak.
+-- count(*) + 1 as streak_length: This counts the number of rows in the group (which are the consecutive days) and adds 1 back (for the starting day that was filtered out) to get the total length of the streak.
