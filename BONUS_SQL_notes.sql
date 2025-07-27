@@ -1033,3 +1033,10 @@ from sf_employee as e join total_bonus_and_salary as b on e.id = b.worker_ref_id
 group by e.employee_title, e.sex
 ;
 -- Find total bonus for each employee and then find average compensation by title and gender instead of finding average compensation directly by title and gender.
+
+-- Find matching hosts and guests pairs in a way that they are both of the same gender and nationality.Output the host id and the guest id of matched pair.
+select distinct h.host_id, g.guest_id
+from airbnb_hosts as h inner join airbnb_guests as g on
+h.gender = g.gender and h.nationality = g.nationality;
+-- You can join based on certain conditions that need to be satisfied from the question with same gender and nationality other than id.
+
