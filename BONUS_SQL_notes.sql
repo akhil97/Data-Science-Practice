@@ -1069,4 +1069,15 @@ where rnk = 1
 ;
 -- sum(streak_change) over(...): For each player, this calculates a cumulative sum of the streak_change flags. Since the flag is 0 for all matches within the same streak and 1 for the first match of a new streak, this sum stays constant for the duration of one streak and then increases by one when a new streak begins. This effectively gives each streak (of both wins and losses) a unique streak_id.
 
+-- Calculate the percentage of spam posts in all viewed posts by day. A post is considered a spam if a string "spam" is inside keywords of the post. Note that the facebook_posts table stores all posts posted by users. The facebook_post_views table is an action table denoting if a user has viewed a post.
+with toal_post_views as (
+select p.post_date, count(v.viewer_id) as total_views,
+count(case when p.post_keywords like '%spam%' then v.viewer_id end) as total_spam_views
+from facebook_posts as p join facebook_post_views as v on p.post_id = v.post_id
+group by p.post_date
+)
+select post_date, (1.0*total_spam_views/total_views)*100 as spam_share
+from toal_post_views;
+;
+
 
