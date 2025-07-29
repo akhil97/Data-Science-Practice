@@ -1080,4 +1080,15 @@ select post_date, (1.0*total_spam_views/total_views)*100 as spam_share
 from toal_post_views;
 ;
 
+-- Count the number of distinct users using Apple devices —limited to "macbook pro", "iphone 5s", and "ipad air" — and compare it to the total number of users per language.
+-- Present the results with the language, the number of Apple users, and the total number of users for each language. Finally, sort the results so that languages with the highest total user count appear first.
+select u.language,
+count(distinct case when e.device in ('macbook pro', 'iphone 5s', 'ipad air') then e.user_id end) as n_apple_user,
+count(distinct e.user_id) as n_total_users
+from playbook_events as e join playbook_users as u on e.user_id = u.user_id
+group by u.language
+order by n_total_users desc;
+-- When you want to find out distinct users in case when statement use distinct before the case statement inside the count function.
+
+
 
