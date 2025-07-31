@@ -1088,7 +1088,22 @@ count(distinct e.user_id) as n_total_users
 from playbook_events as e join playbook_users as u on e.user_id = u.user_id
 group by u.language
 order by n_total_users desc;
+
 -- When you want to find out distinct users in case when statement use distinct before the case statement inside the count function.
+-- Identify customers who did not place an order between 2019-02-01 and 2019-03-01.
+-- Include
+-- •    Customers who placed orders only outside this date range.
+-- •    Customers who never placed any orders.
+-- Output the customers' first names.
+with orders_range as (
+select cust_id
+from orders
+where order_date between '2019-02-01' and '2019-03-01'
+)
+select c.first_name
+from customers as c left join orders_range as o on c.id = o.cust_id
+where o.cust_id is null
+;
 
 
 
