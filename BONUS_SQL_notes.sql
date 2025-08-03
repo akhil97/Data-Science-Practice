@@ -1136,5 +1136,23 @@ from airbnb_host_searches
 group by host_popularity
 order by min_price;
 
+-- You're given a dataset of searches for properties on Airbnb. For simplicity, let's say that each search result (i.e., each row) represents a unique host. Find the city with the most amenities across all their host's properties. Output the name of the city.
+with city_wise_length as (
+select city, LENGTH(amenities) as length_of_amentities
+from airbnb_search_details
+), sum_lengths as (
+select city, sum(length_of_amentities) as sum_amenities
+from city_wise_length
+group by city
+), ranked_amenities_lengths as (
+select *,
+rank() over(order by sum_amenities desc) as rnk
+from sum_lengths
+)
+select city
+from ranked_amenities_lengths
+where rnk = 1
+;
+
 
 
