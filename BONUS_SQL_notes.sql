@@ -1154,5 +1154,15 @@ from ranked_amenities_lengths
 where rnk = 1
 ;
 
+-- Pivot results to get names for Rank 1,2,3 and handling multiple names per rank
+select event_id,
+group_concat(case when rnk = 1 then participant_name else null end order by participant_name asc separator ',') as first,
+group_concat(case when rnk = 2 then participant_name else null end order by participant_name asc separator ',') as second
+group_concat(case when rnk = 3 then participant_name else null end order by participant_name asc separator ',') as third
+from ranked_participants
+where rnk <= 3
+group by event_id
+order by event_id;
+
 
 
