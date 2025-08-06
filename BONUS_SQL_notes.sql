@@ -1164,5 +1164,18 @@ where rnk <= 3
 group by event_id
 order by event_id;
 
+-- Find members with above-average bookings in MySQL
+select memid, count(*) as total_bookings
+from bookings
+group by memid
+having count(*) > (
+    select avg(booking_count)
+    from (
+        select memid, count(*) as booking_count
+        from bookings
+        group by memid
+         )
+) as member_bookings
+
 
 
