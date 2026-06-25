@@ -1177,5 +1177,46 @@ having count(*) > (
          )
 ) as member_bookings
 
+-- Users By Average Session Time
+-- Calculate each user's average session time, where a session is defined as the
+-- time difference between a page_load and a page_exit. Assume each user has only
+-- one session per day. If there are multiple page_load or page_exit events on the same day,
+-- use only the latest page_load and the earliest page_exit. Only consider sessions where
+-- the page_load occurs before the page_exit on the same day. Output the user_id and their average session time.
+
+with page_actions as (
+select user_id, date_format(timestamp, '%m-%d') as month_day, action, timestamp
+from facebook_web_log
+where action in ('page_load', 'page_exit')
+),
+page_load as (
+select user_id, month_day,
+max(timestamp) over(partition by month_day, user_id) as latest_page_load,
+action as page_load, timestamp
+from page_actions
+where action = 'page_load'
+),
+page_exit as (
+select user_id, month_day,
+min(timestamp) over(partition by month_day, user_id) as earliest_page_exit,
+action as page_exit, timestamp
+from page_actions
+where action = 'page_exit'
+),
+user_session_details as (
+select distinct pl.user_id, pl.month_day, pl.latest_page_load, pe.earliest_page_exit
+from page_load as pl join page_exit as pe on pl.user_id = pe.user_id
+where pl.latest_page_load < pe.earliest_page_exit and pl.month_day = pe.month_day
+),
+user_sessions as (
+select *, timestampdiff(second, latest_page_load, earliest_page_exit) as session_duration
+from user_session_details
+)
+select user_id, avg(session_duration) as avg_session_duration
+from user_sessions
+group by user_id
+order by user_id
+;
+
 
 
