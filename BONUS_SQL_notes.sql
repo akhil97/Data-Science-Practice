@@ -1217,6 +1217,55 @@ from user_sessions
 group by user_id
 order by user_id
 ;
+-- Find the number of times each word appears in the contents column across all rows in the google_file_store dataset. Output two columns: word and occurrences.
+WITH RECURSIVE tokens AS (
+  SELECT
+    LOWER(REGEXP_REPLACE(contents, '[^[:alnum:]]+', ' ')) AS contents,
+    TRIM(SUBSTRING_INDEX(LOWER(REGEXP_REPLACE(contents, '[^[:alnum:]]+', ' ')), ' ', 1)) AS word,
+    TRIM(SUBSTRING(LOWER(REGEXP_REPLACE(contents, '[^[:alnum:]]+', ' ')),
+         LENGTH(SUBSTRING_INDEX(LOWER(REGEXP_REPLACE(contents, '[^[:alnum:]]+', ' ')), ' ', 1)) + 2)) AS rest
+  FROM google_file_store
+
+  UNION ALL
+
+  SELECT
+    contents,
+    TRIM(SUBSTRING_INDEX(rest, ' ', 1)) AS word,
+    TRIM(SUBSTRING(rest, LENGTH(SUBSTRING_INDEX(rest, ' ', 1)) + 2)) AS rest
+  FROM tokens
+  WHERE rest <> ''
+
+)
+SELECT word, COUNT(*) AS occurrences
+FROM tokens
+WHERE word <> ''
+GROUP BY word
+ORDER BY occurrences DESC;
+-- Step 1: Clean the text
+-- LOWER(REGEXP_REPLACE(contents, '[^[:alnum:]]+', ' '))
+-- This converts all text to lowercase and replaces punctuation or other non-letter/digit characters with spaces.
+-- Step 2: Extract the first word
+-- TRIM(SUBSTRING_INDEX(..., ' ', 1)) AS word
+-- This takes the first word from the cleaned text.
+-- Step 3: Store the remaining text
+-- TRIM(SUBSTRING(..., LENGTH(SUBSTRING_INDEX(...)) + 2)) AS rest
+-- Step 4: Recursive processing
+-- UNION ALL
+-- SELECT contents, TRIM(SUBSTRING_INDEX(rest, ' ', 1)) AS word,
+--       TRIM(SUBSTRING(rest, LENGTH(SUBSTRING_INDEX(rest, ' ', 1)) + 2)) AS rest
+-- FROM tokens
+-- WHERE rest <> ''
+-- Step 5: Stop when done
+-- WHERE rest <> ''
+-- Step 6: Count the words
+-- SELECT word, COUNT(*) AS occurrences
+-- FROM tokens
+-- WHERE word <> ''
+-- GROUP BY word
+-- ORDER BY word;
+
+
+
 
 
 
