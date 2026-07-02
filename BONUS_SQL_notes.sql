@@ -1264,6 +1264,27 @@ ORDER BY occurrences DESC;
 -- GROUP BY word
 -- ORDER BY word;
 
+-- Monthly Percentage Difference
+-- Given a table of purchases by date, calculate the month-over-month percentage change in revenue. The output should include the year-month date (YYYY-MM) and percentage change, rounded to the 2nd decimal point, and sorted from the beginning of the year to the end of the year.
+-- The percentage change column will be populated from the 2nd month forward and can be calculated as ((this month's revenue - last month's revenue) / last month's revenue)*100.
+with year_month_transactions as (
+select *,
+date_format(created_at, '%Y-%m') as ym
+from sf_transactions
+),
+year_monthly_revenue as (
+select ym, sum(value) as monthly_revenue
+from year_month_transactions
+group by ym
+),
+prev_year_month_revenue as (
+select ym, monthly_revenue,
+lag(monthly_revenue, 1) over(order by ym) as prev_month_revenue
+from year_monthly_revenue
+)
+select ym, round(((monthly_revenue - prev_month_revenue)/(prev_month_revenue))*100, 2)
+from prev_year_month_revenue
+;
 
 
 
