@@ -1285,7 +1285,49 @@ from year_monthly_revenue
 select ym, round(((monthly_revenue - prev_month_revenue)/(prev_month_revenue))*100, 2)
 from prev_year_month_revenue
 ;
+--Compare the total number of comments made by users in each country during December 2019 and January 2020.
+--For each month, rank countries by their total number of comments in descending order. Countries with the same total should share the same rank, and the next rank should increase by one (without skipping numbers).
+--Return the names of the countries whose rank improved from December to January (that is, their rank number became smaller).
 
+--Start by calculating the total comments made by users in each country, for each month — December 2019 and January 2020. To group by month, use date_format(c.created_at, '%Y-%m'). Also, join fb_comments_count with fb_active_users to get each user's country.
+--Separate the results into two Common Table Expressions (CTEs): one for December, and one for January. Then, apply DENSE_RANK() using ORDER BY total_comments DESC in each CTE to rank the countries by their total comments.
+--Finally, compare the December and January ranks by joining on the country field. Only return countries whose rank improved (i.e., dec_rank > jan_rank).
+
+with total_comments as (
+select u.country, date_format(c.created_at, '%Y-%m') as ym, sum(c. number_of_comments) as total_comments
+from fb_active_users as u join fb_comments_count as c on u.user_id = c.user_id
+where c.created_at between '2019-12-01' and '2020-01-31'
+group by u.country, date_format(c.created_at, '%Y-%m')
+),
+december_comments as (
+select country, total_comments
+from total_comments
+where ym = '2019-12'
+),
+january_comments as (
+select country, total_comments
+from total_comments
+where ym = '2020-01'
+),
+december_rank as (
+select country, total_comments,
+dense_rank() over(order by total_comments desc) as dec_rank
+from december_comments
+),
+january_rank as (
+select country, total_comments,
+dense_rank() over(order by total_comments desc) as jan_rank
+from january_comments
+),
+rank_compare as (
+select d.country, d.dec_rank, j.jan_rank
+from december_rank as d join january_rank as j on d.country = j.country
+)
+select country
+from rank_compare
+where dec_rank > jan_rank
+order by dec_rank
+;
 
 
 
