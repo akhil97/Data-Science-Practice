@@ -1328,6 +1328,33 @@ from rank_compare
 where dec_rank > jan_rank
 order by dec_rank
 ;
+-- As a Data Analyst on Snowflake's Marketing Analytics team, your objective is to analyze customer relationship management (CRM) data and identify contacts that satisfy two conditions:
+-- Contacts who had a marketing touch for three or more consecutive weeks.
+-- Contacts who had at least one marketing touch of the type 'trial_request'.
+-- Marketing touches, also known as touch points, represent the interactions or points of contact between a brand and its customers.
+--Your goal is to generate a list of email addresses for these contacts.
+WITH consecutive_events AS (
+SELECT event_id, contact_id, event_type,
+YEARWEEK(event_date, 3) AS event_week,
+LAG(YEARWEEK(event_date, 3)) OVER(PARTITION BY contact_id ORDER BY YEARWEEK(event_date, 3))
+AS lag_event_week,
+LEAD(YEARWEEK(event_date, 3)) OVER(PARTITION BY contact_id ORDER BY YEARWEEK(event_date, 3))
+AS lead_event_week
+FROM marketing_touches
+), marketing_contacts AS (
+SELECT DISTINCT contact_id
+FROM consecutive_events
+WHERE lag_event_week = event_week - 1 OR lead_event_week = event_week + 1 AND
+contact_id IN (
+  SELECT contact_id
+  FROM marketing_touches
+  WHERE event_type = 'trial_request'
+)
+)
+SELECT c.email
+FROM crm_contacts AS c JOIN marketing_contacts AS m ON c.contact_id = m.contact_id
+;
+
 
 
 
