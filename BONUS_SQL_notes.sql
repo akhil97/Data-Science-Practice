@@ -1354,7 +1354,21 @@ contact_id IN (
 SELECT c.email
 FROM crm_contacts AS c JOIN marketing_contacts AS m ON c.contact_id = m.contact_id
 ;
-
+--UnitedHealth Group (UHG) has a program called Advocate4Me, which allows policy holders (or, members) to call an advocate and receive support for their health care needs – whether that's claims and benefits support, drug coverage, pre- and post-authorisation, medical records, emergency assistance, or member portal services.
+--Write a query to obtain the number of unique callers who made calls within a 7-day interval of their previous calls. If a caller made more than two calls within the 7-day period, count them only once.
+WITH user_call_dates AS (
+SELECT *,
+LAG(call_date) OVER(PARTITION BY policy_holder_id ORDER BY call_date DESC) AS previous_call_date
+FROM callers
+), days_between AS (
+SELECT policy_holder_id,
+call_date::date - previous_call_date::date AS time_interval
+FROM user_call_dates
+WHERE previous_call_date IS NOT NULL
+)
+SELECT COUNT(DISTINCT policy_holder_id)
+FROM days_between
+WHERE ABS(time_interval) < 7
 
 
 
