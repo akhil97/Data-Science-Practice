@@ -1263,6 +1263,30 @@ ORDER BY occurrences DESC;
 -- WHERE word <> ''
 -- GROUP BY word
 -- ORDER BY word;
+-- In PostgreSQL
+SELECT
+  word,
+  COUNT(*) AS occurrences
+FROM (
+  -- 1. Normalize and clean the text
+  SELECT
+    LOWER(
+      regexp_replace(
+        contents,
+        '[^A-Za-z0-9]+',  -- replace non-alphanumeric with space
+        ' ',
+        'g'               -- global
+      )
+    ) AS cleaned_contents
+  FROM google_file_store
+) AS t
+-- 2. Split each cleaned_contents into rows of words
+CROSS JOIN LATERAL
+  regexp_split_to_table(t.cleaned_contents, '\s+') AS word
+-- 3. Aggregate
+WHERE word <> ''
+GROUP BY word
+ORDER BY occurrences DESC;
 
 -- Monthly Percentage Difference
 -- Given a table of purchases by date, calculate the month-over-month percentage change in revenue. The output should include the year-month date (YYYY-MM) and percentage change, rounded to the 2nd decimal point, and sorted from the beginning of the year to the end of the year.
