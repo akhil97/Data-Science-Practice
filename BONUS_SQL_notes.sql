@@ -1394,6 +1394,11 @@ SELECT COUNT(DISTINCT policy_holder_id)
 FROM days_between
 WHERE ABS(time_interval) < 7
 
-
+--The PostgreSQL unnest() function expands an array into a set of rows. It is primarily used to normalize array data, perform per-element calculations, or dramatically optimize bulk data insertion.
+SELECT unnest(ARRAY['Apple', 'Banana', 'Cherry']);
+--Result:
+--Apple
+--Banana
+--Cherry
 
 
