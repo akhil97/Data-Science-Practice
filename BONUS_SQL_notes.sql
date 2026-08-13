@@ -1401,4 +1401,20 @@ SELECT unnest(ARRAY['Apple', 'Banana', 'Cherry']);
 --Banana
 --Cherry
 
+-- Exact Match (Case-Insensitive - PostgreSQL) Finds any employee named John, john, JOHN, or JoHn.
+SELECT * FROM employees WHERE first_name ILIKE 'john';
+
+--In PostgreSQL, If you have a table named articles with a tsvector column called body_tsvector, you can find the top 10 most common words across all documents like this:
+SELECT *
+FROM ts_stat('SELECT body_tsvector FROM articles')
+ORDER BY nentry DESC, ndoc DESC
+LIMIT 10;
+
+-- Find the number of times the exact words bull and bear appear in the contents column.
+-- Count all occurrences, even if they appear multiple times within the same row. Matches should be case-insensitive and only count exact words, that is, exclude substrings like bullish or bearing.
+-- Output the word (bull or bear) and the corresponding number of occurrences.
+SELECT word, nentry
+FROM ts_stat('SELECT to_tsvector(contents) FROM google_file_store')
+WHERE word ILIKE 'bull' OR word ILIKE 'bear'
+
 
