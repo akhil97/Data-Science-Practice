@@ -1417,4 +1417,18 @@ SELECT word, nentry
 FROM ts_stat('SELECT to_tsvector(contents) FROM google_file_store')
 WHERE word ILIKE 'bull' OR word ILIKE 'bear'
 
-
+-- The marketing team wants to identify high-value customers for a premium loyalty program. Find all customers who have placed at least one order over $100. Return customer ID and name. Consider all orders regardless of their payment or fulfillment status.
+--Tables online_store_customers, online_store_orders
+--You need customers who have at least one order over $100. This is a perfect case for EXISTS, since you only care whether such an order exists — not how many.
+--Start by selecting customer fields from the customers table:
+SELECT
+    c.customer_id,
+    c.customer_name
+FROM online_store_customers AS c
+--Then use WHERE EXISTS to check for at least one matching order:
+WHERE EXISTS (
+    SELECT 1
+    FROM online_store_orders AS o
+    WHERE o.customer_id = c.customer_id
+      AND o.amount > 100
+)
